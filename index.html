@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Yusuf Bachtiar - Belajar Flowchart Interaktif</title>
     <style>
         /* ================= RESET & DASAR ================= */
@@ -17,7 +17,7 @@
             color: #333;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 100dvh; /* Menggunakan dvh agar sesuai dengan layar HP dinamis */
             overflow: hidden;
         }
 
@@ -25,7 +25,7 @@
         header {
             background-color: #0056b3;
             color: white;
-            padding: 15px 20px;
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -33,22 +33,22 @@
             z-index: 10;
         }
         header h1 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             display: flex;
             align-items: center;
             gap: 10px;
         }
         nav {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
         nav button {
             background: none;
             border: none;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: 5px;
             transition: background 0.3s;
         }
@@ -85,7 +85,7 @@
         
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             margin-top: 20px;
         }
@@ -99,7 +99,7 @@
         .card-svg {
             display: block;
             margin: 10px auto;
-            height: 100px;
+            height: 80px;
         }
 
         /* ================= EDITOR / WORKSPACE ================= */
@@ -112,7 +112,7 @@
             overflow: hidden;
         }
         #panel-kiri {
-            width: 250px;
+            width: 220px;
             background: white;
             border-right: 1px solid #ddd;
             display: flex;
@@ -122,10 +122,11 @@
         }
         .panel-header {
             background: #e9ecef;
-            padding: 10px;
+            padding: 8px;
             font-weight: bold;
             text-align: center;
             border-bottom: 1px solid #ddd;
+            font-size: 0.9rem;
         }
         .simbol-list {
             flex: 1;
@@ -135,7 +136,7 @@
         .simbol-item {
             border: 1px solid #ccc;
             border-radius: 5px;
-            padding: 10px;
+            padding: 8px;
             margin-bottom: 10px;
             text-align: center;
             cursor: pointer;
@@ -143,30 +144,29 @@
             transition: all 0.2s;
         }
         .simbol-item:hover { background: #eef2f5; border-color: #0056b3; }
-        .simbol-item svg { height: 60px; pointer-events: none; }
-        .simbol-item span { display: block; font-size: 0.9rem; margin-top: 5px; pointer-events: none;}
+        .simbol-item svg { height: 45px; pointer-events: none; }
+        .simbol-item span { display: block; font-size: 0.85rem; margin-top: 5px; pointer-events: none;}
 
         #editor-area {
             flex: 1;
-            position: relative;
-            background: #fff url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNkZGQiLz48L3N2Zz4=') repeat;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
+            position: relative;
+            background: #e9ecef;
         }
         #toolbar {
             background: white;
-            padding: 10px;
+            padding: 8px;
             border-bottom: 1px solid #ddd;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
             justify-content: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             z-index: 2;
         }
         .btn {
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -175,29 +175,39 @@
             align-items: center;
             gap: 5px;
             transition: 0.2s;
+            font-size: 0.9rem;
         }
         .btn-primary { background: #0056b3; color: white; }
-        .btn-primary:hover { background: #004494; }
         .btn-warning { background: #ffc107; color: #333; }
-        .btn-warning:hover { background: #e0a800; }
         .btn-danger { background: #dc3545; color: white; }
-        .btn-danger:hover { background: #c82333; }
         .btn-outline { background: white; border: 1px solid #0056b3; color: #0056b3; }
-        .btn-outline:hover { background: #f4f7f6; }
         .btn-outline.active-tool { background: #0056b3; color: white; }
+        .btn-icon { font-size: 1.1rem; padding: 4px 8px; background: #fff; border: 1px solid #ccc; border-radius: 5px;}
+
+        /* SCROLL WRAPPER BARU */
+        #scroll-wrapper {
+            flex: 1;
+            overflow: auto; /* Memungkinkan geser/scroll (pan) */
+            position: relative;
+        }
+
+        /* SVG CONTAINER (Bisa di-zoom) */
+        #svg-container {
+            width: 2500px; /* Kanvas sangat luas agar tidak terpotong */
+            height: 2500px;
+            background: #fff url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNkZGQiLz48L3N2Zz4=') repeat;
+            transform-origin: top left;
+            transition: transform 0.2s ease-out;
+        }
 
         #svg-canvas {
-            flex: 1;
             width: 100%;
             height: 100%;
-            cursor: grab;
-            touch-action: none; /* Cegah scrolling saat drag di HP */
-            z-index: 1;
+            overflow: visible;
         }
-        #svg-canvas:active { cursor: grabbing; }
         
         /* State SVG Node */
-        .node { cursor: pointer; }
+        .node { cursor: pointer; touch-action: none; /* Penting: Hanya node yg di-drag, canvas background bebas discroll */ }
         .node .shape { fill: white; stroke: #333; stroke-width: 2; transition: 0.2s; }
         .node.selected .shape { stroke: #0056b3; stroke-width: 3; filter: drop-shadow(0px 0px 5px rgba(0,86,179,0.5)); }
         .node text { font-size: 14px; text-anchor: middle; dominant-baseline: middle; fill: #333; pointer-events: none; user-select: none;}
@@ -209,7 +219,7 @@
         /* Modal Edit Teks */
         #edit-panel {
             position: absolute;
-            top: 70px;
+            top: 60px;
             left: 50%;
             transform: translateX(-50%);
             background: white;
@@ -223,26 +233,36 @@
             z-index: 100;
         }
         #edit-panel input {
-            padding: 10px;
+            padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            width: 250px;
+            width: 200px;
             font-size: 1rem;
         }
 
-        /* ================= RESPONSIVE SMARTPHONE ================= */
+        /* ================= RESPONSIVE SMARTPHONE (Dioptimalkan) ================= */
         @media (max-width: 768px) {
-            header { flex-direction: column; gap: 10px; padding: 10px; }
-            nav { flex-wrap: wrap; justify-content: center; }
+            header { flex-direction: column; gap: 5px; padding: 8px; }
+            header h1 { font-size: 1.2rem; }
+            nav { flex-wrap: wrap; justify-content: center; gap: 4px;}
+            nav button { font-size: 0.8rem; padding: 5px 8px; }
+            
             #workspace-container { flex-direction: column; }
-            #panel-kiri { width: 100%; height: 120px; flex-direction: row; overflow-x: auto; overflow-y: hidden; border-right: none; border-bottom: 1px solid #ddd; }
+            
+            /* Panel Kiri lebih hemat tempat */
+            #panel-kiri { width: 100%; height: 95px; flex-direction: row; overflow-x: auto; overflow-y: hidden; border-right: none; border-bottom: 1px solid #ddd; }
             .panel-header { display: none; }
-            .simbol-list { display: flex; flex-direction: row; gap: 10px; padding: 5px 10px; }
-            .simbol-item { min-width: 100px; margin-bottom: 0; padding: 5px;}
-            .simbol-item svg { height: 40px; }
-            #toolbar { padding: 5px; font-size: 0.8rem; }
-            .btn { padding: 5px 8px; }
-            #edit-panel { top: 90px; width: 90%; flex-direction: column; }
+            .simbol-list { display: flex; flex-direction: row; gap: 8px; padding: 5px 10px; align-items: center;}
+            .simbol-item { min-width: 85px; margin-bottom: 0; padding: 5px;}
+            .simbol-item svg { height: 35px; }
+            .simbol-item span { font-size: 0.75rem; }
+            
+            /* Toolbar lebih hemat tempat */
+            #toolbar { padding: 5px; gap: 5px; font-size: 0.8rem; }
+            .btn { padding: 5px 6px; font-size: 0.8rem; }
+            .btn-icon { padding: 4px 8px; }
+            
+            #edit-panel { top: 70px; width: 90%; flex-direction: column; }
             #edit-panel input { width: 100%; }
         }
     </style>
@@ -255,7 +275,7 @@
             <button id="tab-pengenalan" class="active" onclick="switchTab('pengenalan')">Pengenalan</button>
             <button id="tab-simbol" onclick="switchTab('simbol')">Kamus Simbol</button>
             <button id="tab-contoh" onclick="switchTab('contoh')">Contoh Flowchart</button>
-            <button id="tab-workspace" onclick="switchTab('workspace')">Workspace (Praktik)</button>
+            <button id="tab-workspace" onclick="switchTab('workspace')">Workspace</button>
         </nav>
     </header>
 
@@ -328,27 +348,12 @@
                 <div class="card">
                     <h3>Kasus 1: Menghitung Luas Persegi</h3>
                     <p>Program sederhana untuk menerima input panjang sisi (s), menghitung luasnya, lalu menampilkan hasilnya.</p>
-                    <ol style="margin-left:20px; font-size: 0.95rem; margin-bottom: 15px;">
-                        <li>Mulai program.</li>
-                        <li>Input: Masukkan nilai sisi (s).</li>
-                        <li>Proses: Hitung Luas = s × s.</li>
-                        <li>Output: Tampilkan Luas.</li>
-                        <li>Selesai.</li>
-                    </ol>
                     <button class="btn btn-primary" onclick="loadTemplate('luas')">✏️ Gunakan sebagai Template</button>
                 </div>
 
                 <div class="card">
                     <h3>Kasus 2: Penentu Ganjil & Genap</h3>
                     <p>Program yang memanfaatkan simbol Decision untuk mengecek apakah angka habis dibagi dua atau tidak.</p>
-                    <ol style="margin-left:20px; font-size: 0.95rem; margin-bottom: 15px;">
-                        <li>Mulai program.</li>
-                        <li>Input: Masukkan Angka.</li>
-                        <li>Decision: Apakah Angka MOD 2 = 0? (Habis dibagi dua)</li>
-                        <li>Jika YA: Tampilkan "Genap".</li>
-                        <li>Jika TIDAK: Tampilkan "Ganjil".</li>
-                        <li>Selesai.</li>
-                    </ol>
                     <button class="btn btn-primary" onclick="loadTemplate('ganjilgenap')">✏️ Gunakan sebagai Template</button>
                 </div>
             </div>
@@ -389,22 +394,25 @@
                     <div id="toolbar">
                         <button class="btn btn-outline" id="btn-connect" onclick="toggleConnectMode()">🔗 Hubungkan</button>
                         <button class="btn btn-warning" onclick="openEditPanel()">✏️ Edit Teks</button>
-                        <button class="btn btn-danger" onclick="deleteSelected()">🗑️ Hapus Terpilih</button>
-                        <button class="btn btn-danger" onclick="clearWorkspace()">🗑️ Bersihkan Semua</button>
+                        <button class="btn btn-danger" onclick="deleteSelected()">🗑️ Hapus</button>
+                        <button class="btn btn-icon" onclick="zoomIn()" title="Zoom In">🔍+</button>
+                        <button class="btn btn-icon" onclick="zoomOut()" title="Zoom Out">🔍-</button>
                     </div>
 
-                    <!-- KANVAS SVG -->
-                    <svg id="svg-canvas">
-                        <defs>
-                            <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#333" />
-                            </marker>
-                        </defs>
-                        <!-- Grup Garis (Di belakang Node) -->
-                        <g id="layer-edges"></g>
-                        <!-- Grup Simbol -->
-                        <g id="layer-nodes"></g>
-                    </svg>
+                    <!-- KANVAS SCROLLABLE -->
+                    <div id="scroll-wrapper">
+                        <div id="svg-container">
+                            <svg id="svg-canvas">
+                                <defs>
+                                    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#333" />
+                                    </marker>
+                                </defs>
+                                <g id="layer-edges"></g>
+                                <g id="layer-nodes"></g>
+                            </svg>
+                        </div>
+                    </div>
 
                     <!-- Panel Edit Teks Floating -->
                     <div id="edit-panel">
@@ -427,18 +435,36 @@
             
             document.getElementById(tabId).classList.add('active');
             document.getElementById('tab-' + tabId).classList.add('active');
+
+            if(tabId === 'workspace') {
+                centerScroll();
+            }
+        }
+
+        /* ================= ZOOMING ================= */
+        let currentZoom = 1;
+        function zoomIn() {
+            currentZoom = Math.min(2, currentZoom + 0.2);
+            document.getElementById('svg-container').style.transform = `scale(${currentZoom})`;
+        }
+        function zoomOut() {
+            currentZoom = Math.max(0.4, currentZoom - 0.2);
+            document.getElementById('svg-container').style.transform = `scale(${currentZoom})`;
+        }
+        function centerScroll() {
+            // Scroll ke tengah kanvas (x: 1250) agar siap digunakan
+            let wrapper = document.getElementById('scroll-wrapper');
+            wrapper.scrollLeft = (2500 * currentZoom - wrapper.clientWidth) / 2;
+            wrapper.scrollTop = 50; 
         }
 
         /* ================= LOGIKA EDITOR FLOWCHART ================= */
-        
-        let nodes = []; // Menyimpan data bentuk {id, type, x, y, text}
-        let edges = []; // Menyimpan data garis {id, from, to, label}
-        
+        let nodes = []; 
+        let edges = []; 
         let draggedNode = null;
         let selectedNode = null;
         let offsetX, offsetY;
         
-        // Mode Hubungkan
         let isConnectMode = false;
         let connectStartNode = null;
 
@@ -448,16 +474,17 @@
         const editPanel = document.getElementById('edit-panel');
         const textInput = document.getElementById('text-input');
         const btnConnect = document.getElementById('btn-connect');
+        const scrollWrapper = document.getElementById('scroll-wrapper');
 
-        // Bikin ID unik
         function generateId() {
             return Math.random().toString(36).substr(2, 9);
         }
 
-        // Tambah node dari panel kiri
+        // Tambah node
         function addNode(type, text = "", x = null, y = null) {
-            let posX = x !== null ? x : (svgCanvas.clientWidth / 2) || 200;
-            let posY = y !== null ? y : 100 + (nodes.length * 20);
+            // Jika koordinat tidak diberikan, letakkan tepat di posisi yang sedang dilihat user saat ini
+            let posX = x !== null ? x : (scrollWrapper.scrollLeft + scrollWrapper.clientWidth / 2) / currentZoom;
+            let posY = y !== null ? y : (scrollWrapper.scrollTop + 150) / currentZoom + (nodes.length * 15);
 
             if (text === "") {
                 if (type === 'terminator') text = "MULAI";
@@ -467,14 +494,7 @@
                 else text = "A";
             }
 
-            const newNode = {
-                id: generateId(),
-                type: type,
-                x: posX,
-                y: posY,
-                text: text
-            };
-
+            const newNode = { id: generateId(), type: type, x: posX, y: posY, text: text };
             nodes.push(newNode);
             selectNode(newNode);
             render();
@@ -485,14 +505,12 @@
         }
 
         /* ================= RENDERING SVG ================= */
-        
         function formatText(text) {
             const maxLen = 15;
             if (text.length > maxLen && text.includes(" ")) {
                 let mid = Math.floor(text.length / 2);
                 let spaceIdx = text.lastIndexOf(" ", mid);
                 if(spaceIdx === -1) spaceIdx = text.indexOf(" ", mid);
-                
                 if (spaceIdx !== -1) {
                     return [text.substring(0, spaceIdx), text.substring(spaceIdx + 1)];
                 }
@@ -512,7 +530,6 @@
         }
 
         function render() {
-            // Render Garis
             layerEdges.innerHTML = '';
             edges.forEach(edge => {
                 let nodeA = nodes.find(n => n.id === edge.from);
@@ -549,20 +566,15 @@
                 layerEdges.innerHTML += lineHtml;
             });
 
-            // Render Node Simbol
             layerNodes.innerHTML = '';
             nodes.forEach(node => {
                 let isSelected = selectedNode && selectedNode.id === node.id ? 'selected' : '';
-                
                 let textLines = formatText(node.text);
                 let textHtml = '';
                 if(textLines.length === 1) {
                     textHtml = `<text y="2">${textLines[0]}</text>`;
                 } else {
-                    textHtml = `
-                        <text y="-5">${textLines[0]}</text>
-                        <text y="15">${textLines[1]}</text>
-                    `;
+                    textHtml = `<text y="-5">${textLines[0]}</text><text y="15">${textLines[1]}</text>`;
                 }
 
                 let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -595,12 +607,7 @@
                                 label = prompt("Masukkan label cabang (Ketik: YA, TIDAK, atau biarkan kosong):", "YA");
                                 if (label === null) label = "";
                             }
-                            edges.push({
-                                id: generateId(),
-                                from: connectStartNode.id,
-                                to: node.id,
-                                label: label.toUpperCase()
-                            });
+                            edges.push({ id: generateId(), from: connectStartNode.id, to: node.id, label: label.toUpperCase() });
                         }
                         connectStartNode = null;
                         render();
@@ -619,7 +626,7 @@
 
         svgCanvas.addEventListener('pointermove', function(e) {
             if (draggedNode && !isConnectMode) {
-                e.preventDefault(); 
+                e.preventDefault(); // Cegah scrolling layar saat menggeser objek
                 let pt = getMousePosition(e);
                 draggedNode.x = pt.x - offsetX;
                 draggedNode.y = pt.y - offsetY;
@@ -627,10 +634,9 @@
             }
         });
 
-        svgCanvas.addEventListener('pointerup', function(e) { draggedNode = null; });
-        svgCanvas.addEventListener('pointerleave', function(e) { draggedNode = null; });
-
-        // Jalan pintas edit dengan double click (tetap dipertahankan untuk laptop)
+        svgCanvas.addEventListener('pointerup', function() { draggedNode = null; });
+        svgCanvas.addEventListener('pointerleave', function() { draggedNode = null; });
+        
         svgCanvas.addEventListener('dblclick', function(e) {
             let target = e.target.closest('.node');
             if (target && !isConnectMode) {
@@ -665,12 +671,10 @@
             if (isConnectMode) {
                 btnConnect.classList.add('active-tool');
                 btnConnect.innerHTML = "🔗 Pilih 2 Simbol...";
-                svgCanvas.style.cursor = "crosshair";
                 selectNode(null);
             } else {
                 btnConnect.classList.remove('active-tool');
                 btnConnect.innerHTML = "🔗 Hubungkan";
-                svgCanvas.style.cursor = "grab";
                 render();
             }
         }
@@ -682,33 +686,21 @@
                 selectNode(null);
                 render();
             } else {
-                alert("Silakan klik salah satu simbol terlebih dahulu untuk menghapusnya.");
+                alert("Klik (sentuh) salah satu simbol terlebih dahulu untuk menghapusnya.");
             }
         }
 
-        function clearWorkspace() {
-            if(confirm("Apakah Anda yakin ingin menghapus seluruh diagram?")) {
-                nodes = [];
-                edges = [];
-                selectNode(null);
-                render();
-            }
-        }
-
-        // FUNGSI UNTUK MEMBUKA PANEL EDIT TEKS
         function openEditPanel() {
             if(selectedNode) {
                 editPanel.style.display = 'flex';
                 textInput.focus();
-                textInput.select(); // Blok seluruh teks agar bisa langsung ditimpa
+                textInput.select();
             } else {
-                alert("Pilih simbol terlebih dahulu!\n\nKlik (sentuh) salah satu simbol di area kerja, lalu klik tombol Edit Teks.");
+                alert("Pilih simbol terlebih dahulu!");
             }
         }
 
-        function closeEditPanel() {
-            editPanel.style.display = 'none';
-        }
+        function closeEditPanel() { editPanel.style.display = 'none'; }
 
         function updateNodeText() {
             if(selectedNode) {
@@ -718,7 +710,6 @@
             }
         }
 
-        // Memungkinkan edit teks menggunakan tombol ENTER di keyboard
         textInput.addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
@@ -742,43 +733,49 @@
         function loadTemplate(type) {
             nodes = [];
             edges = [];
-            let wCenter = (window.innerWidth > 768) ? window.innerWidth / 2 + 100 : window.innerWidth / 2;
+            let wCenter = 1250; // Titik tengah kanvas luas (2500/2)
 
             if (type === 'luas') {
-                let n1 = { id: "n1", type: "terminator", x: wCenter, y: 60, text: "MULAI" };
-                let n2 = { id: "n2", type: "io", x: wCenter, y: 160, text: "Input sisi (s)" };
-                let n3 = { id: "n3", type: "process", x: wCenter, y: 260, text: "Luas = s * s" };
-                let n4 = { id: "n4", type: "io", x: wCenter, y: 360, text: "Tampil Luas" };
-                let n5 = { id: "n5", type: "terminator", x: wCenter, y: 460, text: "SELESAI" };
-                nodes.push(n1, n2, n3, n4, n5);
-                
-                edges.push({ id: "e1", from: "n1", to: "n2", label: "" });
-                edges.push({ id: "e2", from: "n2", to: "n3", label: "" });
-                edges.push({ id: "e3", from: "n3", to: "n4", label: "" });
-                edges.push({ id: "e4", from: "n4", to: "n5", label: "" });
+                nodes.push(
+                    { id: "n1", type: "terminator", x: wCenter, y: 100, text: "MULAI" },
+                    { id: "n2", type: "io", x: wCenter, y: 200, text: "Input sisi (s)" },
+                    { id: "n3", type: "process", x: wCenter, y: 300, text: "Luas = s * s" },
+                    { id: "n4", type: "io", x: wCenter, y: 400, text: "Tampil Luas" },
+                    { id: "n5", type: "terminator", x: wCenter, y: 500, text: "SELESAI" }
+                );
+                edges.push(
+                    { id: "e1", from: "n1", to: "n2", label: "" },
+                    { id: "e2", from: "n2", to: "n3", label: "" },
+                    { id: "e3", from: "n3", to: "n4", label: "" },
+                    { id: "e4", from: "n4", to: "n5", label: "" }
+                );
             } 
             else if (type === 'ganjilgenap') {
-                let n1 = { id: "g1", type: "terminator", x: wCenter, y: 60, text: "MULAI" };
-                let n2 = { id: "g2", type: "io", x: wCenter, y: 150, text: "Input Angka" };
-                let n3 = { id: "g3", type: "decision", x: wCenter, y: 260, text: "Angka MOD 2=0?" };
-                let n4 = { id: "g4", type: "io", x: wCenter - 140, y: 380, text: "Tampil Genap" };
-                let n5 = { id: "g5", type: "io", x: wCenter + 140, y: 380, text: "Tampil Ganjil" };
-                let n6 = { id: "g6", type: "terminator", x: wCenter, y: 500, text: "SELESAI" };
-                nodes.push(n1, n2, n3, n4, n5, n6);
-
-                edges.push({ id: "l1", from: "g1", to: "g2", label: "" });
-                edges.push({ id: "l2", from: "g2", to: "g3", label: "" });
-                edges.push({ id: "l3", from: "g3", to: "g4", label: "YA" });
-                edges.push({ id: "l4", from: "g3", to: "g5", label: "TIDAK" });
-                edges.push({ id: "l5", from: "g4", to: "g6", label: "" });
-                edges.push({ id: "l6", from: "g5", to: "g6", label: "" });
+                nodes.push(
+                    { id: "g1", type: "terminator", x: wCenter, y: 100, text: "MULAI" },
+                    { id: "g2", type: "io", x: wCenter, y: 190, text: "Input Angka" },
+                    { id: "g3", type: "decision", x: wCenter, y: 300, text: "Angka MOD 2=0?" },
+                    { id: "g4", type: "io", x: wCenter - 140, y: 420, text: "Tampil Genap" },
+                    { id: "g5", type: "io", x: wCenter + 140, y: 420, text: "Tampil Ganjil" },
+                    { id: "g6", type: "terminator", x: wCenter, y: 540, text: "SELESAI" }
+                );
+                edges.push(
+                    { id: "l1", from: "g1", to: "g2", label: "" },
+                    { id: "l2", from: "g2", to: "g3", label: "" },
+                    { id: "l3", from: "g3", to: "g4", label: "YA" },
+                    { id: "l4", from: "g3", to: "g5", label: "TIDAK" },
+                    { id: "l5", from: "g4", to: "g6", label: "" },
+                    { id: "l6", from: "g5", to: "g6", label: "" }
+                );
             }
             
             switchTab('workspace');
             render();
         }
 
+        // Render awal & pusatkan scroll
         render();
+        window.onload = centerScroll;
 
     </script>
 </body>
